@@ -1,97 +1,8 @@
-import fs from 'fs/promises'; // Using promises version of fs
+import fs from 'fs';
 
 export default class ProductManager{
     constructor(filePath){
-        this.products = [{
-            "title": "Producto prueba 1",
-            "description": "Este es un producto prueba 1",
-            "price": 200,
-            "thumbnail": "Sin imagen",
-            "code": "abc1",
-            "stock": 25,
-            "id": 1
-        },
-        {
-            "title": "Producto prueba 2",
-            "description": "Este es un producto prueba 2",
-            "price": 200,
-            "thumbnail": "Sin imagen",
-            "code": "abc2",
-            "stock": 25,
-            "id": 2
-        },
-        {
-            "title": "Producto prueba 3",
-            "description": "Este es un producto prueba 3",
-            "price": 200,
-            "thumbnail": "Sin imagen",
-            "code": "abc3",
-            "stock": 25,
-            "id": 3
-        },
-        {
-            "title": "Producto prueba 4",
-            "description": "Este es un producto prueba 4",
-            "price": 200,
-            "thumbnail": "Sin imagen",
-            "code": "abc4",
-            "stock": 25,
-            "id": 4
-        },
-        {
-            "title": "Producto prueba 5",
-            "description": "Este es un producto prueba 5",
-            "price": 200,
-            "thumbnail": "Sin imagen",
-            "code": "abc5",
-            "stock": 25,
-            "id": 5
-        },
-        {
-            "title": "Producto prueba 6",
-            "description": "Este es un producto prueba 6",
-            "price": 200,
-            "thumbnail": "Sin imagen",
-            "code": "abc6",
-            "stock": 25,
-            "id": 6
-        },
-        {
-            "title": "Producto prueba 7",
-            "description": "Este es un producto prueba 7",
-            "price": 200,
-            "thumbnail": "Sin imagen",
-            "code": "abc7",
-            "stock": 25,
-            "id": 7
-        },
-        {
-            "title": "Producto prueba 8",
-            "description": "Este es un producto prueba 8",
-            "price": 200,
-            "thumbnail": "Sin imagen",
-            "code": "abc8",
-            "stock": 25,
-            "id": 8
-        },
-        {
-            "title": "Producto prueba 9",
-            "description": "Este es un producto prueba 9",
-            "price": 200,
-            "thumbnail": "Sin imagen",
-            "code": "abc9",
-            "stock": 25,
-            "id": 9
-        },
-        {
-            "title": "Producto prueba 10",
-            "description": "Este es un producto prueba 10",
-            "price": 200,
-            "thumbnail": "Sin imagen",
-            "code": "abc10",
-            "stock": 25,
-            "id": 10
-        }];  
+        this.products = fs.existsSync(filePath) ? JSON.parse(fs.readFileSync(filePath)) : []; 
         this.path = filePath;
     }
 
@@ -99,30 +10,30 @@ export default class ProductManager{
         fs.writeFileSync(this.path, JSON.stringify(this.products));
     }
 
-    addProduct(title, description, price, thumbnail, code, stock){
-        if(!this.products.find((product)=> product.code === code)){
+    addProduct(productQuery){
+        if(!this.products.find((product)=> product.code === productQuery.code)){
             let newProduct = {
-                title: title,
-                description: description,
-                price: price,
-                thumbnail: thumbnail,
-                code: code,
-                stock: stock
-            };
-            if(!Object.values(newProduct).some((valor)=> valor === "" || null || undefined)){
-                let product = [...this.products];
-        
-                let ProductId
-                product.length <= 0 ?
-                ProductId = 1
-                :
-                ProductId = this.products[this.products.length - 1].id + 1;
-        
-                product.push({...newProduct, id:ProductId});
-                this.products = product;
-            }else{
-                return console.log("Error: Error adding product, Some field is empty, null or undefined");
-            }
+                title,
+                description,
+                code,
+                price,
+                stock,
+                category,
+                thumbnails,
+                productStatus
+            } = productQuery;
+
+            let productsOnList = [...this.products];
+    
+            let ProductId
+            productsOnList.length <= 0 ?
+            ProductId = 1
+            :
+            ProductId = this.products[this.products.length - 1].id + 1;
+    
+            productsOnList.push({...newProduct, id:ProductId});
+            this.products = productsOnList;
+            this.saveProducts();
         }else{
             return console.log("Error: Error adding product, Product code already exists");
         }
