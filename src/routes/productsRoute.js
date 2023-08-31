@@ -41,35 +41,32 @@ router.get('/:pid', (req, res) => {
 
 router.post('/', (req, res)=>{
     try{
-        let productQuery = {
-            title,
-            description,
-            code,
-            price,
-            stock,
-            category,
-            thumbnails: thumbnails,
-            productStatus: productStatus
-        } = req.body;
+        const productQuery = req.body;
+        let productQueryArray = Object.values(productQuery);
 
-        if(!Object.values(productQuery.slice(0, productQuery.length - 1)).some(value => value === "" || null || undefined)){
-            if(Object.values([
-                productQuery.title,
-                productQuery.description,
-                productQuery.code,
-                productQuery.category
-            ]).some(value => typeof value !== "string")
-            ||
-            Object.values([
-                productQuery.price,
-                productQuery.stock,
-            ]).some(value => typeof value !== "number")
-            ||
-            typeof productQuery.productStatus !== "boolean"){
-                return res.status(400).json({error: 'Incorrect value type'})
+        if(!productQueryArray.slice(0, productQueryArray.length - 2).some(value => value === "" || null || undefined)){
+
+            if(!productQuery.productStatus){
+                productQuery.productStatus = true;
             }
 
-            productManager.addProduct(productQuery);
+            if(!productQuery.thumbnails){
+                productQuery.thumbnails = [];
+            }
+
+            if([productQuery.title, productQuery.description, productQuery.code, productQuery.category].some(value => typeof value !== "string")
+            ||
+            [productQuery.price, productQuery.stock].some(value => typeof value !== "number")
+            ||
+            typeof productQuery.productStatus !== "boolean"
+            ||
+            productQuery.thumbnails.some(value => typeof value !== "string")){
+                return res.status(400).json({error: 'Incorrect value type'})
+            }
+            const response = productManager.addProduct(productQuery);
+            return res.status(200).json({response,
+                message: "Element added succesfully"
+            })
         }else{
             return res.status(400).json({error: 'Any value is undefined'})
         }
@@ -83,13 +80,14 @@ router.put('/:pid', (req, res)=>{
     if(isNaN(productId)){
         return res.status(400).json({error: 'Product id is not a number type'})
     }
-
-    let { productToUpdate, newFieldValue } = req.body
-
-    if(!productToUpdate || !newFieldValue){
+    const productModify = req.body;
+    if(!productModify.field || !productModify.newFieldValue){
         return res.status(400).json({error: 'Some value is empty'})
     }
-    productManager.updateProduct(productId, productToUpdate, newFieldValue);
+    let response = productManager.updateProduct(productId, productModify.field, productModify.newFieldValue);
+    res.status(200).json({response,
+        message: "Element modified succesfully"
+    })
 })
 
 router.delete('/:pid', (req, res)=>{
@@ -97,5 +95,8 @@ router.delete('/:pid', (req, res)=>{
     if(isNaN(productId)){
         return res.status(400).json({error: 'Product id is not a number type'})
     }
-    productManager.deleteProduct(productId);
+    let response = productManager.deleteProduct(productId);
+    res.status(200).json({response,
+        message: "Element deleted succesfully"
+    })
 })

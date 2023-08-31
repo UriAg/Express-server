@@ -12,16 +12,7 @@ export default class ProductManager{
 
     addProduct(productQuery){
         if(!this.products.find((product)=> product.code === productQuery.code)){
-            let newProduct = {
-                title,
-                description,
-                code,
-                price,
-                stock,
-                category,
-                thumbnails,
-                productStatus
-            } = productQuery;
+            let newProduct = productQuery;
 
             let productsOnList = [...this.products];
     
@@ -35,7 +26,7 @@ export default class ProductManager{
             this.products = productsOnList;
             this.saveProducts();
         }else{
-            return console.log("Error: Error adding product, Product code already exists");
+            return {error:"Error adding product, Product code already exists"}; 
         }
     }
 
@@ -48,7 +39,7 @@ export default class ProductManager{
         if(IdProductSearch){
             return IdProductSearch;
         }else{
-            return console.log("Error: Search error, ID removed or not founded");
+            return {error:`Search error, ID removed or not founded`}
         }
     }
 
@@ -58,7 +49,7 @@ export default class ProductManager{
             this.products.splice(indexToDelete, 1);
             this.saveProducts();
         }else{
-            return console.log(`Error: Delete error, ID "${id}" Not Found.`);
+            return {error:`Delete error, ID "${id}" Not Found.`}
         }
 
     }
@@ -69,7 +60,7 @@ export default class ProductManager{
             productToUpdate[field] = value;
             this.saveProducts()
         }else{
-            return console.log(`Error: Search error, ID "${id}" Not Found.`);
+            return {error:`Search error, ID "${id}" Not Found.`}
         }
     }
 }

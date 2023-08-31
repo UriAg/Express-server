@@ -12,7 +12,7 @@ export default class CartManager{
 
     addCart(){
         let newCart = {
-            products
+            products: []
         }
 
         let cartsOnList = [...this.carts];
@@ -33,23 +33,24 @@ export default class CartManager{
     }
 
     getProductsByCartId(id){
-        let ProductOnCartIdSearch = this.carts.find((cart) => cart.id === id);
+        let ProductOnCartIdSearch = this.carts.find(cart => cart.id === id);
         if(ProductOnCartIdSearch){
             return ProductOnCartIdSearch.products;
         }else{
-            return console.log("Error: Search error, cart not founded");
+            return {error:`Search error, cart not founded`}
         }
     }
 
     addProductToCart(cartId, productId, productQuantity){
         let cartSelected = this.carts.find((cart) => cart.id === cartId);
         if(cartSelected){
-            cartSelected.products[productId] ? 
-            cartSelected.products[productId].quantity + 1 : 
-            cartSelected.products.push({productId, productQuantity})
+            let productExist = cartSelected.products.find(product => product.id === productId)
+            productExist ? 
+            productExist.quantity += 1 : 
+            cartSelected.products.push({"id":productId, "quantity":productQuantity})
             this.saveCarts();
         }else{
-            return console.log("Error: Search error, cart not founded");
+            return {error:`Search error, cart not founded`}
         }
     }
 
