@@ -64,5 +64,16 @@
         "productStatus": true,
         "thumbnails": [],
         "id": 11
+    },
+    {
+        "title": "Producto prueba con socket",
+        "description": "Este es un producto prueba 6",
+        "price": 200,
+        "thumbnails": [],
+        "code": "kdu4",
+        "stock": 25,
+        "category": "Gaming",
+        "productStatus": true,
+        "id": 12
     }
 ]
